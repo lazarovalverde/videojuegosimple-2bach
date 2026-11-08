@@ -1,0 +1,320 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Reto Scratch — Recoge objetos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+  :root {
+    --bg: #fafaf8;
+    --bg-alt: #f0efeb;
+    --fg: #1a1916;
+    --fg-muted: #5a5850;
+    --accent: #c94f1a;
+    --accent-light: #fce9e1;
+    --accent-dark: #9e3c12;
+    --ok: #2a7a4b;
+    --ok-light: #d9f0e5;
+    --s1: #1a5fa8;
+    --s1-light: #ddeeff;
+    --s2: #7a3ea8;
+    --s2-light: #eeddf8;
+    --border: #d8d6cf;
+    --r: 6px;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #181714; --bg-alt: #221f1a; --fg: #e8e6df; --fg-muted: #9a9589;
+      --accent: #e06030; --accent-light: #3a1f10; --accent-dark: #f08050;
+      --ok: #3aae6a; --ok-light: #0d2e1c;
+      --s1: #4a8fd8; --s1-light: #0d1f35;
+      --s2: #a86ed8; --s2-light: #221035;
+      --border: #3a3830; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #181714; --bg-alt: #221f1a; --fg: #e8e6df; --fg-muted: #9a9589;
+    --accent: #e06030; --accent-light: #3a1f10; --accent-dark: #f08050;
+    --ok: #3aae6a; --ok-light: #0d2e1c;
+    --s1: #4a8fd8; --s1-light: #0d1f35;
+    --s2: #a86ed8; --s2-light: #221035;
+    --border: #3a3830; color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding-block: 2rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .page { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .header { border-bottom: 2px solid var(--accent); padding-bottom: 1rem; display: flex; flex-direction: column; gap: .4rem; }
+  .header-meta { font-size: .78rem; color: var(--fg-muted); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; }
+  .header h1 { margin: 0; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; line-height: 1.2; text-wrap: balance; }
+  .header-sub { color: var(--fg-muted); font-size: .9rem; margin: 0; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .3rem; }
+  .badge { font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: .2em .65em; border-radius: 20px; border: 1.5px solid currentColor; }
+  .badge-loop  { color: var(--s1); background: var(--s1-light); }
+  .badge-cond  { color: var(--accent); background: var(--accent-light); }
+  .badge-var   { color: var(--ok); background: var(--ok-light); }
+  .badge-block { color: var(--s2); background: var(--s2-light); }
+
+  .section { background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--r); padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: .8rem; }
+  .section-title { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); margin: 0; }
+
+  .sesiones { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .sesiones { grid-template-columns: 1fr; } }
+  .sesion { border-radius: var(--r); border: 1.5px solid var(--border); overflow: hidden; }
+  .sesion-header { padding: .6rem 1rem; font-weight: 700; font-size: .82rem; letter-spacing: .03em; display: flex; align-items: center; gap: .5rem; }
+  .sesion-1 .sesion-header { background: var(--s1-light); color: var(--s1); }
+  .sesion-2 .sesion-header { background: var(--s2-light); color: var(--s2); }
+  .sesion-num { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; }
+  .sesion-body { padding: .9rem 1rem; display: flex; flex-direction: column; gap: .6rem; background: var(--bg); }
+  .sesion-objetivo { font-size: .82rem; color: var(--fg-muted); font-style: italic; border-left: 3px solid var(--border); padding-left: .6rem; margin: 0; }
+
+  .steps { display: flex; flex-direction: column; gap: .4rem; padding: 0; margin: 0; list-style: none; }
+  .step { display: flex; gap: .6rem; align-items: flex-start; font-size: .88rem; }
+  .step-n { font-family: var(--font-mono); font-size: .72rem; font-weight: 600; min-width: 1.4rem; padding-top: .18em; color: var(--fg-muted); }
+
+  .tabla-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; min-width: 480px; }
+  th { text-align: left; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--fg-muted); padding: .5rem .7rem; border-bottom: 1.5px solid var(--border); }
+  td { padding: .55rem .7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .tag { font-size: .72rem; font-weight: 600; padding: .15em .55em; border-radius: 4px; }
+
+  .callout { background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: 0 var(--r) var(--r) 0; padding: .8rem 1rem; font-size: .88rem; }
+  .callout strong { color: var(--accent-dark); }
+  .callout ul { margin: .4rem 0 0 1.1rem; padding: 0; }
+  .callout li { margin-bottom: .25rem; }
+
+  .niveles { display: flex; flex-direction: column; gap: .4rem; }
+  .nivel { display: flex; align-items: center; gap: .7rem; padding: .5rem .8rem; border-radius: var(--r); font-size: .86rem; border: 1px solid var(--border); background: var(--bg); }
+  .nivel-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .n1 .nivel-dot { background: #aaa; }
+  .n2 .nivel-dot { background: var(--s1); }
+  .n3 .nivel-dot { background: var(--s2); }
+  .n4 .nivel-dot { background: var(--ok); }
+  .n5 .nivel-dot { background: var(--accent); }
+
+  /* ══ FICHA ══ */
+  .ficha { border: 2px dashed var(--border); border-radius: var(--r); overflow: hidden; }
+  .ficha-header { background: var(--fg); color: var(--bg); padding: .7rem 1.4rem; display: flex; align-items: center; gap: .8rem; }
+  .ficha-header h2 { margin: 0; font-size: .9rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .ficha-curso { margin-left: auto; font-size: .78rem; opacity: .7; font-family: var(--font-mono); }
+  .ficha-body { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 1rem; }
+
+  .plantilla-wrap { position: relative; }
+  .plantilla {
+    font-family: var(--font-mono);
+    font-size: .82rem;
+    line-height: 1.75;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    white-space: pre-wrap;
+    color: var(--fg);
+    user-select: all;
+  }
+  .btn-copy {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    font-family: var(--font-body);
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--fg-muted);
+    background: var(--bg-alt);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: .3rem .75rem;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+  .btn-copy:hover { color: var(--accent); border-color: var(--accent); }
+  .btn-copy.copied { color: var(--ok); border-color: var(--ok); }
+
+  .entrega-nota { font-size: .82rem; color: var(--fg-muted); background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--r); padding: .7rem 1rem; display: flex; gap: .6rem; align-items: flex-start; }
+  .entrega-nota-icon { font-size: 1rem; flex-shrink: 0; }
+</style>
+
+<div class="page">
+
+  <header class="header">
+    <p class="header-meta">2.º Bachillerato · Digitalización · Scratch</p>
+    <h1>Diseña tu videojuego: Recoge objetos que caen</h1>
+    <p class="header-sub">2 sesiones · trabajo individual o en pareja · sin código de partida</p>
+    <div class="badge-row">
+      <span class="badge badge-loop">Bucles</span>
+      <span class="badge badge-cond">Condicionales</span>
+      <span class="badge badge-var">Variables</span>
+      <span class="badge badge-block">Bloques propios</span>
+    </div>
+  </header>
+
+  <div class="section">
+    <p class="section-title">El reto</p>
+    <p style="margin:0">Vais a construir un videojuego en Scratch partiendo de cero. Un personaje en la parte inferior de la pantalla se mueve a izquierda y derecha. Objetos caen desde arriba en posición aleatoria. Si los recoges, sumas puntos; si se te escapan o tocas uno malo, pierdes una vida. Cuando las vidas llegan a 0, el juego termina.</p>
+    <p style="margin:0;font-size:.9rem;color:var(--fg-muted)">Podéis buscar proyectos de Scratch que os sirvan de referencia y copiar mecanismos que entendáis. Lo importante es que sepáis explicar por qué habéis usado cada estructura.</p>
+    <p style="margin:0;font-size:.88rem;padding:.6rem .9rem;background:var(--s1-light);border-left:3px solid var(--s1);border-radius:0 var(--r) var(--r) 0"><strong style="color:var(--s1)">Estructura del arranque:</strong> al pulsar la bandera verde se ejecuta un bloque propio <code style="font-family:var(--font-mono);font-size:.85em">iniciar</code> que envía el mensaje <code style="font-family:var(--font-mono);font-size:.85em">comenzar</code>. Todos los sprites arrancan su lógica al recibir ese mensaje, no directamente con la bandera.</p>
+  </div>
+
+  <div class="section">
+    <p class="section-title">Desarrollo — sesión a sesión</p>
+    <div class="sesiones">
+      <div class="sesion sesion-1">
+        <div class="sesion-header"><span class="sesion-num">S1</span> Primera sesión · ~45 min</div>
+        <div class="sesion-body">
+          <p class="sesion-objetivo">Objetivo: que el juego exista. Personaje que se mueve, objetos que caen, colisión básica.</p>
+          <p style="font-size:.82rem;padding:.5rem .7rem;background:var(--ok-light);border-left:3px solid var(--ok);border-radius:0 4px 4px 0;margin:0"><strong style="color:var(--ok)">Antes de programar:</strong> buscad en Scratch o en Google un proyecto parecido («recoge objetos Scratch», «catch game Scratch»). Mirad cómo está hecho, copiad el mecanismo que os interese y entendedlo. No hace falta inventar nada desde cero.</p>
+          <ol class="steps">
+            <li class="step"><span class="step-n">1</span><span>Crea el bloque propio <code style="font-family:var(--font-mono);font-size:.85em">iniciar</code>: al pulsar bandera → llamar a <code style="font-family:var(--font-mono);font-size:.85em">iniciar</code> → dentro, enviar mensaje <code style="font-family:var(--font-mono);font-size:.85em">comenzar</code></span></li>
+            <li class="step"><span class="step-n">2</span><span>Personaje: <em>al recibir «comenzar»</em> → se mueve con ← →</span></li>
+            <li class="step"><span class="step-n">3</span><span>Objeto que cae: <em>al recibir «comenzar»</em> → empieza arriba en X aleatoria, baja, vuelve a empezar</span></li>
+            <li class="step"><span class="step-n">4</span><span>Detecta colisión → suma un punto</span></li>
+          </ol>
+          <p style="font-size:.8rem;color:var(--fg-muted);margin:0">Quien llegue al paso 4 ya ha usado las cuatro estructuras principales.</p>
+        </div>
+      </div>
+      <div class="sesion sesion-2">
+        <div class="sesion-header"><span class="sesion-num">S2</span> Segunda sesión · ~45 min</div>
+        <div class="sesion-body">
+          <p class="sesion-objetivo">Objetivo: que sea un juego de verdad. Puntos, vidas, fin de partida.</p>
+          <ol class="steps">
+            <li class="step"><span class="step-n">5</span><span>Variable <strong>vidas</strong> visible en pantalla</span></li>
+            <li class="step"><span class="step-n">6</span><span>Si el objeto llega al suelo → vidas −1</span></li>
+            <li class="step"><span class="step-n">7</span><span>Cuando vidas = 0 → envía mensaje <code style="font-family:var(--font-mono);font-size:.85em">fin</code> → todos paran</span></li>
+            <li class="step"><span class="step-n">8</span><span><strong>Extra:</strong> objeto malo que reste vidas al tocarlo</span></li>
+            <li class="step"><span class="step-n">9</span><span><strong>Reto final:</strong> velocidad de caída aumenta con el tiempo</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-title">Estructuras que deberás usar</p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Estructura</th><th>Dónde aparece en el juego</th><th>Ejercicio del repaso</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag badge-loop" style="border:none">Bucle</span></td><td>Los objetos siguen cayendo sin parar</td><td style="font-size:.8rem;color:var(--fg-muted)">3.1 — 3.3</td></tr>
+          <tr><td><span class="tag badge-cond" style="border:none">Condicional</span></td><td>¿Toco el objeto? ¿Vidas = 0? ¿Llega al suelo?</td><td style="font-size:.8rem;color:var(--fg-muted)">2.1 — 2.3</td></tr>
+          <tr><td><span class="tag badge-var" style="border:none">Variable</span></td><td>Puntos, vidas, velocidad</td><td style="font-size:.8rem;color:var(--fg-muted)">1.1 — 1.3</td></tr>
+          <tr><td><span class="tag badge-block" style="border:none">Bloque propio</span></td><td><code style="font-family:var(--font-mono);font-size:.85em">iniciar</code> (obligatorio), «perder_vida», «sumar_puntos»</td><td style="font-size:.8rem;color:var(--fg-muted)">4.1 — 4.3</td></tr>
+          <tr><td><span style="font-size:.72rem;font-weight:600;padding:.15em .55em;border-radius:4px;background:var(--bg-alt);color:var(--fg-muted);border:1.5px solid var(--border)">Mensajes</span></td><td><code style="font-family:var(--font-mono);font-size:.85em">comenzar</code> arranca · <code style="font-family:var(--font-mono);font-size:.85em">fin</code> detiene</td><td style="font-size:.8rem;color:var(--fg-muted)">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Pregunta que te ayuda cuando no sabes qué bloque usar:</strong>
+    <ul>
+      <li>¿Esto pasa una vez o continuamente? → si es continuo, va dentro de un bucle</li>
+      <li>¿Esto pasa siempre o solo cuando se cumple algo? → si depende de algo, es un condicional</li>
+      <li>¿Estoy escribiendo el mismo código más de una vez? → crea un bloque propio</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <p class="section-title">Niveles de llegada</p>
+    <div class="niveles">
+      <div class="nivel n1"><div class="nivel-dot"></div><span>El personaje se mueve con las teclas</span></div>
+      <div class="nivel n2"><div class="nivel-dot"></div><span>Hay objetos cayendo en bucle</span></div>
+      <div class="nivel n3"><div class="nivel-dot"></div><span>Se detecta la colisión y se suman puntos</span></div>
+      <div class="nivel n4"><div class="nivel-dot"></div><span>Hay vidas y fin de partida</span></div>
+      <div class="nivel n5"><div class="nivel-dot"></div><span>Hay objeto malo y/o dificultad progresiva</span></div>
+    </div>
+    <p style="font-size:.82rem;color:var(--fg-muted);margin:0">Cualquier nivel es válido. Lo importante es que podáis explicar las decisiones que habéis tomado.</p>
+  </div>
+
+  <!-- FICHA DE ENTREGA -->
+  <div class="ficha">
+    <div class="ficha-header">
+      <h2>✦ Ficha de entrega</h2>
+      <span class="ficha-curso">2.º Bach · Scratch</span>
+    </div>
+    <div class="ficha-body">
+      <p style="font-size:.85rem;color:var(--fg-muted);margin:0">Copia el texto de abajo, pégalo en un documento de Google Docs y rellena los huecos. Después compártelo con el profesor o súbelo a Classroom.</p>
+
+      <div class="plantilla-wrap">
+        <button class="btn-copy" id="btnCopy">Copiar</button>
+        <div class="plantilla" id="plantilla">FICHA DE ENTREGA — Videojuego Scratch
+2.º Bachillerato · Digitalización
+────────────────────────────────
+
+Nombre / Pareja: ___________________________________
+
+Enlace al proyecto en Scratch:
+https://scratch.mit.edu/projects/___________________
+
+────────────────────────────────
+¿QUÉ HAS IMPLEMENTADO? (marca con X)
+────────────────────────────────
+
+[ ] Personaje que se mueve con las teclas
+[ ] Objetos que caen en bucle con posición X aleatoria
+[ ] Detección de colisión con acción (puntos o vidas)
+[ ] Variables de puntos y vidas visibles en pantalla
+[ ] Fin de partida cuando vidas = 0
+[ ] Bloque propio «iniciar» que envía el mensaje «comenzar»
+[ ] Los sprites arrancan con «Al recibir comenzar», no con la bandera
+[ ] Objeto malo o dificultad progresiva (extra)
+
+────────────────────────────────
+REFLEXIÓN
+────────────────────────────────
+
+1. ¿Dónde has usado un bucle y por qué?
+
+
+
+2. ¿Dónde has usado un condicional y por qué?
+
+
+
+3. ¿Has creado algún bloque propio? ¿Para qué?
+
+
+
+4. ¿Qué ha sido lo más difícil? ¿Cómo lo has resuelto?
+</div>
+      </div>
+
+      <div class="entrega-nota">
+        <span class="entrega-nota-icon">📋</span>
+        <span>Copia el texto, pégalo en Google Docs, rellena los huecos y compártelo con el profesor o súbelo a Classroom junto con el enlace al proyecto.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const btn = document.getElementById('btnCopy');
+  btn?.addEventListener('click', () => {
+    const text = document.getElementById('plantilla').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      const range = document.createRange();
+      range.selectNodeContents(document.getElementById('plantilla'));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    });
+  });
+</script>
+
+</body></html>
